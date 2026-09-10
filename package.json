@@ -1,0 +1,2 @@
+{
+  "name":"apiusagebar-android","version":"1.0.1","private":false,"scripts":{"cap:sync":"npx cap sync android","android:debug":"npm run cap:sync; cd android; gradlew.bat assembleDebug","test:mobile":"node tests/mobile/verify-mobile-ui.cjs"},"dependencies":{"@capacitor/android":"^8.5.1","@capacitor/core":"^8.5.1","@capacitor/cli":"^8.5.1","@aparajita/capacitor-secure-storage":"^8.0.0"}}
