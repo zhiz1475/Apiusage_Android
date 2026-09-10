@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 154 30" width="154" height="30" role="img" aria-labelledby="title">
-<title id="title">ApiUsageBar</title>
-<g fill="none" stroke="#eeeeef" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter">
-<path d="M2 23 8 7h2l6 16M5 17h8M21 23V7h7c6 0 6 9 0 9h-7M38 7v16M35 7h6M35 23h6"/>
-<path d="M60 7v11c0 7 12 7 12 0V7M91 7H81c-6 0-6 8 0 8h5c7 0 7 8 0 8H76M97 23l6-16h2l6 16M100 17h8M131 7h-8c-9 0-9 16 0 16h8v-8h-6M149 7h-11v16h11M138 15h9"/>
-</g><path d="m49 24 5-18" fill="none" stroke="#b36b74" stroke-width="2.4"/>
-</svg>

@@ -1,2 +1,0 @@
-const { app, BrowserWindow } = require('electron');
-app.whenReady().then(()=>{const win=new BrowserWindow({width:800,height:600,minWidth:400,minHeight:600,frame:false,transparent:true,thickFrame:true,roundedCorners:true,hasShadow:true,autoHideMenuBar:true,backgroundColor:'#00000000',resizable:true,maximizable:true,minimizable:true,show:true,webPreferences:{contextIsolation:true,nodeIntegration:false,sandbox:true}}); win.loadURL('data:text/html,<body style="background:rgba(80,120,220,.7);margin:0"><h1>exact</h1></body>');});

@@ -1,9 +1,0 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('node:path');
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-app.whenReady().then(async () => {
- const win = new BrowserWindow({width:1080,height:800,show:false,offscreen:true,webPreferences:{contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});
- await win.loadFile(path.join(process.cwd(),'index.html'));
- await win.webContents.executeJavaScript(`if(typeof renderPreviewDemo==='function')renderPreviewDemo(); document.body.classList.add('electron-window'); document.documentElement.classList.add('electron-window'); setTheme?.('day'); document.querySelector('.mode-btn[data-mode="full"]')?.click(); void 0`); await sleep(700);
- const out=await win.webContents.executeJavaScript(`(() => { const sels=['body','.app-shell','.topbar','.full-toolbar h1','.full-toolbar p','.last-sync','.refresh-btn','.kpi-card','.kpi-head','.kpi-main','.kpi-meta','.panel','.panel-header h2','.panel-header p','.mode-switch','.mode-btn','.mode-btn.active','.segmented-toggle','.chart-toggle','.chart-toggle.active','.scroll-indicator','.scroll-thumb']; const props=['color','backgroundColor','borderColor','opacity','filter','backdropFilter','boxShadow','fontSize','fontWeight','lineHeight','animationName','animationDuration','pointerEvents','overflowY']; const read=s=>{const e=document.querySelector(s);if(!e)return null;const c=getComputedStyle(e),r=e.getBoundingClientRect();return {sel:s,cls:e.className,rect:{x:r.x,y:r.y,w:r.width,h:r.height},...Object.fromEntries(props.map(p=>[p,c[p]]))}}; return {body:read('body'),mode:document.body.dataset.mode,buttons:[...document.querySelectorAll('.mode-btn')].map(e=>({text:e.textContent,cls:e.className,active:e.classList.contains('active')})),els:sels.map(read)}; })()`); console.log(out); app.exit(0);
-});

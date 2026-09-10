@@ -1,2 +1,0 @@
-const {app,BrowserWindow}=require('electron'); const path=require('path');
-app.whenReady().then(async()=>{const w=new BrowserWindow({width:1080,height:800,show:false,offscreen:true,webPreferences:{sandbox:true}});await w.loadFile(path.join(process.cwd(),'pelican-bicycle.html'));await new Promise(r=>setTimeout(r,120));const result=await w.webContents.executeJavaScript(`JSON.stringify({title:document.title,canvas:[ride.width,ride.height],buttons:[play.textContent,bell.textContent],speed:speed.value})`);console.log(result);app.exit(0);});

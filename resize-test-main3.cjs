@@ -1,5 +1,0 @@
-const { app, BrowserWindow } = require('electron');
-app.whenReady().then(() => {
-  const win = new BrowserWindow({ width:800,height:600, frame:false, transparent:true, thickFrame:true, backgroundMaterial:'acrylic', resizable:true, show:true });
-  win.loadURL('data:text/html,<body style="background:rgba(80,120,220,.7);margin:0"><h1>thickFrame acrylic</h1></body>');
-});
