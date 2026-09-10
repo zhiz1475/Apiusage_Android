@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {monthKeys,monthCells,localDate,lastSevenDays,subscriptionFunds} from './mobile/mobile-view-model.js';
+assert.equal(monthCells('2024-02').filter(Boolean).length,29);
+assert.equal(monthCells('2026-02').filter(Boolean).length,28);
+assert.equal(monthCells('2026-03').length,42);
+assert.deepEqual(monthKeys([{date:'2025-12-31'},{date:'2026-02-02'}]),['2025-12','2026-01','2026-02']);
+assert.equal(localDate('2026-03-01').getDate(),1);
+const now=new Date(2026,8,10);
+const sparse=lastSevenDays({daily:[{date:'2026-09-09',spent:4}],historyComplete:false},now);
+assert.equal(sparse.length,7);assert.equal(sparse[5].spent,4);assert.equal(sparse[6].spent,null);
+assert.equal(lastSevenDays({historyComplete:true},now)[0].spent,0);
+const funds=subscriptionFunds({authenticated:true,account:{balance:100},subscriptions:[{remaining:20,endDate:'2026-10-01'},{remaining:10,endDate:'2025-01-01'}]},now);
+assert.equal(funds.remaining,20);assert.equal(funds.plans.length,1);
+assert.equal(subscriptionFunds({authenticated:true,subscriptions:[{remaining:null}]},now).remaining,null);
+assert.equal(subscriptionFunds({authenticated:false},now).remaining,null);
+assert.equal(subscriptionFunds({authenticated:true,subscriptions:[],subscriptionsAvailable:false},now).remaining,null);
+console.log('Calendar boundaries, missing dates and separate subscription balances passed');

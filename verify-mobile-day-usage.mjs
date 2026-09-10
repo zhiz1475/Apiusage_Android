@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import {fetchDayUsage,createDayUsage} from './mobile/mobile-day-usage.js';
+import {MobileKapibalaClient,MobileClientError} from './mobile/mobile-client.js';
+const key='2026-09-09',start=new Date(2026,8,9),time=Math.floor(start/1000)+3600;
+const record=(id,extra={})=>({id,type:'2',model_name:'test-model',created_at:id%2?time:time*1000,prompt_tokens:'8',completion_tokens:'2',quota:'100',...extra});
+const calls=[];
+const client={getSession:()=>({userId:'test-user',sessionSid:'fixture-only'}),shouldRenew:()=>false,getCachedData:()=>({moneyScale:.01}),request:async path=>{
+  const u=new URL(path,'https://mock.invalid');calls.push(u);
+  const page=Number(u.searchParams.get('p'));
+  return {body:{success:true,data:{total:'101',items:page===1?Array.from({length:100},(_,i)=>record(i+1)):[record(101,{model_name:'second-model'})]}}};
+}};
+const data=await fetchDayUsage(client,key);
+assert.equal(data.complete,true);assert.equal(data.models.reduce((s,m)=>s+m.requests,0),101);assert.equal(data.models.reduce((s,m)=>s+m.tokens,0),1010);assert.equal(data.models.reduce((s,m)=>s+m.spent,0),101);
+assert.equal(calls.length,2);assert.equal(calls[0].searchParams.get('type'),'2');assert.equal(Number(calls[0].searchParams.get('start_timestamp')),Math.floor(start/1000));assert.equal(Number(calls[0].searchParams.get('end_timestamp')),Math.floor(new Date(2026,8,10)/1000)-1);assert.equal(data.logs.length,20);
+const failed={...client,request:async path=>{if(new URL(path,'https://mock.invalid').searchParams.get('p')==='2')throw Error('mock failed page');return client.request(path);}};
+assert.equal((await fetchDayUsage(failed,key)).complete,false);
+const repeated={...client,request:async()=>({body:{data:{total:200,items:[record(1)]}}})};
+const repeat=await fetchDayUsage(repeated,key);assert.equal(repeat.complete,false);assert.equal(repeat.models[0].requests,1);
+const noTotal={...client,request:async()=>({body:{data:[record(1),record(1),record(2,{created_at:Math.floor(start/1000)-1})]}})};
+assert.equal((await fetchDayUsage(noTotal,key)).models[0].requests,1);
+await assert.rejects(fetchDayUsage(client,'2026-02-30'),e=>e.code==='INVALID_DATE');
+const cancelled=await fetchDayUsage(client,key,{isCurrent:()=>false}).catch(e=>e.code);assert.equal(cancelled,'ABORTED');
+const cached=createDayUsage(client);await cached.get(key);
+const saved=client.request;client.request=async()=>{throw new MobileClientError('offline','NETWORK_ERROR');};assert.equal((await cached.get(key,{force:true})).stale,true);
+client.request=async()=>{throw new MobileClientError('expired','HTTP_401');};await assert.rejects(cached.get(key,{force:true}),e=>e.code==='HTTP_401');client.request=saved;
+const headers=[];globalThis.Capacitor={Plugins:{CapacitorHttp:{request:async options=>{headers.push(options.headers);return {status:200,data:{success:true}};}}}};
+const native=new MobileKapibalaClient({storage:{getItem:()=>null}});native.session={accessToken:'fixture-only',userId:'42'};await native.request('/api/log/self');assert.equal(headers[0]['New-Api-User'],'42');
+console.log('Day usage: pagination, time bounds, aggregation, deduplication, partial results, cancellation, cache and auth checks passed');

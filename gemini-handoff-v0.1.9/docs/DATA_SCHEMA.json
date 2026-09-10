@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ApiUsageBar dashboard payload",
+  "type": "object",
+  "required": ["authenticated", "provider"],
+  "properties": {
+    "authenticated": {"type": "boolean"},
+    "provider": {"const": "kapibala.asia"},
+    "username": {"type": "string"},
+    "fetchedAt": {"type": ["string", "null"], "format": "date-time"},
+    "currency": {"type": "string", "enum": ["USD", "CNY", "CUSTOM"]},
+    "currencySymbol": {"type": "string"},
+    "account": {
+      "$ref": "#/$defs/aggregate",
+      "description": "余额字段通过 quota_per_unit 和汇率换算后的显示值",
+      "properties": {
+        "balance": {"type": "number"},
+        "used": {"type": "number"},
+        "total": {"type": "number"},
+        "requests": {"type": "integer"},
+        "status": {"type": "string"}
+      }
+    },
+    "today": {"$ref": "#/$defs/aggregate"},
+    "week": {"$ref": "#/$defs/aggregate"},
+    "daily": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "spent", "tokens", "requests"],
+        "properties": {
+          "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+          "spent": {"type": "number"},
+          "tokens": {"type": "integer"},
+          "requests": {"type": "integer"}
+        }
+      }
+    },
+    "historyStart": {"type": ["string", "null"], "format": "date-time"},
+    "historyEnd": {"type": ["string", "null"], "format": "date-time"},
+    "historyComplete": {"type": "boolean"},
+    "historyTruncated": {"type": "boolean"},
+    "models": {
+      "type": "object",
+      "properties": {
+        "week": {"$ref": "#/$defs/models"},
+        "today": {"$ref": "#/$defs/models"}
+      }
+    },
+    "subscriptions": {"type": "array", "items": {"$ref": "#/$defs/subscription"}},
+    "subscriptionSummary": {
+      "type": "object",
+      "properties": {
+        "count": {"type": "integer"},
+        "total": {"type": "number"},
+        "remaining": {"type": "number"},
+        "nearestExpiry": {"type": ["string", "null"]}
+      }
+    }
+  },
+  "$defs": {
+    "aggregate": {
+      "type": "object",
+      "properties": {
+        "spent": {"type": "number"},
+        "tokens": {"type": "integer"},
+        "inputTokens": {"type": "integer"},
+        "outputTokens": {"type": "integer"},
+        "requests": {"type": "integer"},
+        "averageRPM": {"type": "number"},
+        "averageTPM": {"type": "number"}
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "model": {"type": "string"},
+          "logo": {"type": "string"},
+          "spent": {"type": "number"},
+          "tokens": {"type": "integer"},
+          "inputTokens": {"type": "integer"},
+          "outputTokens": {"type": "integer"},
+          "requests": {"type": "integer"},
+          "share": {"type": "number"}
+        }
+      }
+    },
+    "subscription": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "status": {"type": "string"},
+        "total": {"type": "number"},
+        "used": {"type": "number"},
+        "remaining": {"type": "number"},
+        "remainingPercent": {"type": "number", "minimum": 0, "maximum": 1},
+        "endDate": {"type": ["string", "null"]},
+        "endLabel": {"type": "string"}
+      }
+    }
+  }
+}

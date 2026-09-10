@@ -1,0 +1,56 @@
+{
+  "name": "apiusagebar",
+  "version": "0.1.9",
+  "description": "Kapibala account usage monitor for Windows",
+  "main": "main.cjs",
+  "private": true,
+  "author": "ApiUsageBar",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^38.8.6",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.apiusagebar.kapibala",
+    "productName": "ApiUsageBar",
+    "artifactName": "ApiUsageBar-Setup-${version}-${arch}.${ext}",
+    "files": [
+      "index.html",
+      "styles.css",
+      "window-overrides.css",
+      "app.js",
+      "main.cjs",
+      "preload.cjs",
+      "kapibala-client.cjs",
+      "assets/**/*"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "win": {
+      "icon": "assets/kapibala-logo.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "ApiUsageBar-Setup-${version}-x64.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ApiUsageBar",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    }
+  }
+}

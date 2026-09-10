@@ -1,0 +1,1 @@
+const{app,screen}=require('electron');app.whenReady().then(()=>{console.log(JSON.stringify(screen.getAllDisplays().map(d=>({id:d.id,bounds:d.bounds,workArea:d.workArea,scaleFactor:d.scaleFactor})),null,2));app.exit(0)});

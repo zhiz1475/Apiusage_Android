@@ -1,0 +1,14 @@
+{
+  "appId": "com.apiusagebar.kapibala",
+  "appName": "ApiUsageBar",
+  "webDir": "mobile",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    },
+    "SecureStorage": {
+      "prefix": "apiusagebar_"
+    }
+  }
+}

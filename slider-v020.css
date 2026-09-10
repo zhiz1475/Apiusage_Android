@@ -1,0 +1,134 @@
+/*
+ * ApiUsageBar v0.2 — renderer-owned scrollbar material
+ *
+ * The native Chromium rail is hidden by window-overrides.css.  This control
+ * deliberately separates the generous pointer hit area from the visible
+ * capsule: the track stops 10px before the HWND edge (preserving the native
+ * WS_THICKFRAME resize zone), while the idle thumb is only 4px wide.  The
+ * result is closer to Apple's quiet overlay scrollbar instead of a grey rail.
+ */
+
+body.electron-window .scroll-indicator {
+  right: 10px !important;
+  width: 16px !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity .22s ease !important;
+  contain: layout paint style;
+}
+
+body.electron-window .scroll-indicator.is-visible {
+  opacity: .32 !important;
+  pointer-events: auto !important;
+}
+
+body.electron-window .scroll-indicator.is-visible:hover,
+body.electron-window .scroll-indicator.is-visible.is-active,
+body.electron-window .scroll-indicator.is-visible:focus-visible {
+  opacity: .96 !important;
+}
+
+/* Keep the scrollbar itself from stealing the resize frame.  The track is
+ * inset farther than the old 8px placement; only the capsule receives drag
+ * input, while the surrounding 16px area remains a comfortable page-jump
+ * target. */
+body.electron-window .scroll-thumb {
+  left: 9px !important;
+  width: 4px !important;
+  min-height: 40px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(39, 57, 83, .58) !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, .42),
+    inset -1px 0 0 rgba(21, 35, 58, .18),
+    0 2px 7px rgba(24, 40, 66, .22) !important;
+  overflow: hidden;
+  will-change: transform, width, left;
+  transition:
+    background-color .18s ease,
+    width .18s ease,
+    left .18s ease,
+    box-shadow .18s ease !important;
+}
+
+/* A tiny specular edge gives the capsule a glass response without painting a
+ * coloured gradient over the data. */
+body.electron-window .scroll-thumb::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 1px;
+  width: 1px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .52);
+  opacity: .72;
+  pointer-events: none;
+}
+
+body.electron-window .scroll-indicator.is-visible:hover .scroll-thumb,
+body.electron-window .scroll-indicator.is-active .scroll-thumb,
+body.electron-window .scroll-indicator:focus-visible .scroll-thumb {
+  left: 8px !important;
+  width: 6px !important;
+  background: rgba(32, 49, 75, .78) !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, .58),
+    inset -1px 0 0 rgba(16, 28, 48, .20),
+    0 3px 11px rgba(20, 35, 60, .30) !important;
+}
+
+body.electron-window .scroll-indicator:focus {
+  outline: none !important;
+}
+
+body.electron-window .scroll-indicator:focus-visible {
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(79, 95, 201, .28);
+}
+
+body.night-mode.electron-window .scroll-thumb {
+  background: rgba(191, 207, 238, .54) !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, .34),
+    inset -1px 0 0 rgba(15, 24, 42, .24),
+    0 2px 8px rgba(0, 0, 0, .34) !important;
+}
+
+body.night-mode.electron-window .scroll-thumb::before {
+  background: rgba(255, 255, 255, .64);
+}
+
+body.night-mode.electron-window .scroll-indicator.is-visible:hover .scroll-thumb,
+body.night-mode.electron-window .scroll-indicator.is-active .scroll-thumb,
+body.night-mode.electron-window .scroll-indicator:focus-visible .scroll-thumb {
+  background: rgba(222, 231, 251, .82) !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, .54),
+    inset -1px 0 0 rgba(16, 25, 45, .20),
+    0 3px 12px rgba(0, 0, 0, .44) !important;
+}
+
+body.night-mode.electron-window .scroll-indicator:focus-visible {
+  box-shadow: 0 0 0 2px rgba(171, 164, 245, .42);
+}
+
+@media (pointer: coarse) {
+  body.electron-window .scroll-indicator { width: 22px !important; right: 8px !important; }
+  body.electron-window .scroll-thumb { left: 12px !important; width: 6px !important; }
+  body.electron-window .scroll-indicator.is-visible:hover .scroll-thumb,
+  body.electron-window .scroll-indicator.is-active .scroll-thumb,
+  body.electron-window .scroll-indicator:focus-visible .scroll-thumb {
+    left: 11px !important;
+    width: 8px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.electron-window .scroll-indicator,
+  body.electron-window .scroll-thumb {
+    transition: none !important;
+  }
+}

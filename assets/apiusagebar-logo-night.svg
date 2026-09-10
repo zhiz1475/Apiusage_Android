@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="48" viewBox="0 0 240 48" role="img" aria-labelledby="title desc">
+  <title id="title">ApiUsageBar</title>
+  <desc id="desc">A geometric usage bar mark for dark surfaces.</desc>
+  <g aria-hidden="true">
+    <path d="M3 41 18 6l15 35h-8l-3-8H14l-3 8H3Zm14-15h6l-3-10-3 10Z" fill="#f1f1ef"/>
+    <rect x="38" y="6" width="6" height="35" fill="#a25861"/>
+    <rect x="49" y="18" width="6" height="23" fill="#b7b7ba"/>
+    <rect x="60" y="11" width="6" height="30" fill="#77777d"/>
+    <text x="78" y="30" fill="#f1f1ef" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="1.1">ApiUsage</text>
+    <text x="176" y="30" fill="#a25861" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="1.1">Bar</text>
+    <rect x="78" y="37" width="141" height="2" fill="#a25861"/>
+  </g>
+</svg>

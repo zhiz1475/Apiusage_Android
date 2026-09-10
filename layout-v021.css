@@ -1,0 +1,451 @@
+/* v0.2.1 adaptive layout layer.
+ * This file owns the new geometry so the legacy flat-theme rules remain easy
+ * to audit. It deliberately contains no color literals; the visual palette is
+ * supplied by the theme tokens in styles.css.
+ */
+
+/* A widget window is content-sized by default. A manually enlarged window can
+ * use the extra width, while a short window remains a normal scroll surface. */
+body.electron-window .view-widget.active {
+  min-height: 0;
+  max-height: calc(100vh - 104px);
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+body.electron-window .widget-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  justify-items: stretch;
+  width: min(100%, 960px);
+  max-width: 960px;
+  min-height: 0;
+  height: auto;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+body.electron-window .widget-card {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  height: auto;
+  align-self: center;
+}
+
+body.electron-window .widget-footer {
+  margin-top: 24px;
+  padding-top: 0;
+}
+
+/* At wide sizes the widget keeps its hierarchy but uses the available width
+ * for a calmer two-column information block. The compact 400–520px window
+ * remains a single column. */
+@media (min-width: 720px) {
+  body.electron-window .widget-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr);
+    column-gap: 28px;
+    align-items: start;
+  }
+
+  body.electron-window .widget-card-header,
+  body.electron-window .widget-hero {
+    grid-column: 1 / -1;
+  }
+
+  body.electron-window .mini-progress {
+    grid-column: 1;
+    margin-top: 30px;
+  }
+
+  body.electron-window .widget-balances {
+    grid-column: 2;
+    margin-top: 30px;
+  }
+
+  body.electron-window .open-full,
+  body.electron-window .widget-footer {
+    grid-column: 1 / -1;
+  }
+
+  body.electron-window .open-full {
+    margin-top: 28px;
+  }
+}
+
+@media (max-width: 719px) {
+  body.electron-window .widget-stage {
+    width: 100%;
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  body.electron-window .topbar {
+    margin-bottom: 16px;
+  }
+
+  body.electron-window .widget-stage {
+    min-height: 0;
+    padding-block: 8px 0;
+  }
+
+  body.electron-window .widget-card {
+    align-self: start;
+  }
+}
+
+/* A manually stretched, narrow widget keeps the same compact reading rhythm
+ * as the normal widget.  The extra viewport height belongs to the stage
+ * around the card; it must not become artificial gaps between the card's
+ * information blocks. */
+@media (min-width: 401px) and (max-width: 719px) and (min-height: 820px) {
+  body.electron-window .widget-stage {
+    min-height: 0;
+    padding-block: 8px 0;
+  }
+
+  body.electron-window .widget-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 0;
+  }
+
+  /* Keep every content block at its intrinsic height.  A taller manual
+   * window therefore adds breathing room outside the card rather than
+   * spreading the reading rhythm between metrics. */
+  body.electron-window .widget-card-header,
+  body.electron-window .mini-progress,
+  body.electron-window .widget-balances,
+  body.electron-window .open-full,
+  body.electron-window .widget-footer {
+    flex: 0 0 auto;
+  }
+
+  body.electron-window .widget-hero {
+    flex: 0 0 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  /* Keep the same deliberate rhythm as the compact widget.  These gaps are
+   * content spacing, so they remain stable when the outer window is taller. */
+  body.electron-window .mini-progress {
+    margin-top: 30px;
+  }
+
+  body.electron-window .widget-balances {
+    margin-top: 18px;
+  }
+
+  body.electron-window .open-full,
+  body.electron-window .widget-footer {
+    margin-top: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.electron-window .widget-stage,
+  body.electron-window .widget-card {
+    scroll-behavior: auto;
+  }
+}
+
+/* v0.2.2 compact widget
+ *
+ * The widget is a glance surface rather than a second dashboard.  Keep the
+ * full view untouched, but collapse the widget's title bar and information
+ * blocks into a short stack that fits the new 360×360 DIP native window.
+ * Every metric remains in the DOM (and therefore available to screen readers);
+ * only decorative whitespace and duplicated captions are reduced. */
+body.electron-window[data-mode="widget"] .app-shell {
+  padding: 0 8px 8px;
+}
+
+body.electron-window[data-mode="widget"] .topbar {
+  height: 48px;
+  margin: 0 -8px 4px;
+  padding: 0 8px;
+  gap: 6px;
+}
+
+body.electron-window[data-mode="widget"] .brand-lockup {
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 5px;
+}
+
+body.electron-window[data-mode="widget"] .brand-lockup .brand-mark {
+  width: 28px;
+  height: 28px;
+  flex-basis: 28px;
+}
+
+body.electron-window[data-mode="widget"] .brand-lockup .capybara-logo {
+  width: 26px;
+  height: 26px;
+}
+
+body.electron-window[data-mode="widget"] .brand-wordmark {
+  width: 82px;
+  height: 22px;
+  max-width: 82px;
+}
+
+body.electron-window[data-mode="widget"] .mode-switch {
+  flex: 0 0 auto;
+  height: 28px;
+  margin-left: 2px;
+}
+
+body.electron-window[data-mode="widget"] .mode-btn,
+body.electron-window[data-mode="widget"] .mode-btn.active {
+  min-width: 49px;
+  height: 26px;
+  padding-inline: 5px;
+  font-size: 10px;
+}
+
+body.electron-window[data-mode="widget"] .topbar-actions {
+  flex: 0 0 auto;
+  gap: 3px;
+  margin-left: auto;
+}
+
+/* Account and theme controls remain available in the full dashboard.  The
+ * compact card has its own refresh/pin controls, leaving the title bar for
+ * the mode switch and native window actions. */
+body.electron-window[data-mode="widget"] #themeBtn,
+body.electron-window[data-mode="widget"] .account-pill {
+  display: none;
+}
+
+body.electron-window[data-mode="widget"] .window-controls {
+  padding-left: 3px;
+}
+
+body.electron-window[data-mode="widget"] .window-control {
+  width: 24px;
+  height: 28px;
+  font-size: 13px;
+}
+
+body.electron-window[data-mode="widget"] .view-widget {
+  /* The compact title bar occupies 52px. Leave only the 8px shell edge
+   * below the card; the previous 60px subtraction made a 302px card spill
+   * into a 300px scroller and exposed a scrollbar at the fixed 360px height. */
+  max-height: calc(100vh - 58px);
+  scrollbar-width: none;
+}
+
+body.electron-window[data-mode="widget"] .view-widget::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body.electron-window[data-mode="widget"] .widget-stage {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+}
+
+body.electron-window[data-mode="widget"] .widget-card {
+  width: 100%;
+  max-width: none;
+  padding: 10px;
+}
+
+body.electron-window[data-mode="widget"] .widget-card-header {
+  min-height: 24px;
+  padding-bottom: 7px;
+}
+
+body.electron-window[data-mode="widget"] .widget-card-header .eyebrow {
+  font-size: 8px;
+  letter-spacing: .1em;
+}
+
+body.electron-window[data-mode="widget"] .widget-card-actions {
+  gap: 4px !important;
+}
+
+body.electron-window[data-mode="widget"] #widgetPin {
+  min-width: 46px !important;
+  width: auto;
+  height: 24px;
+  padding: 0 5px !important;
+  font-size: 9px !important;
+}
+
+body.electron-window[data-mode="widget"] #refreshWidget {
+  min-width: 26px;
+  width: 26px;
+  height: 24px;
+  font-size: 14px;
+}
+
+body.electron-window[data-mode="widget"] .widget-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "label value" "sub value";
+  align-items: end;
+  column-gap: 8px;
+  min-height: 0;
+  margin-top: 8px;
+}
+
+body.electron-window[data-mode="widget"] .widget-hero .hero-label {
+  grid-area: label;
+  margin-top: 0;
+  font-size: 9px;
+}
+
+body.electron-window[data-mode="widget"] .widget-hero .hero-value {
+  grid-area: value;
+  margin: 0;
+  font-size: 30px;
+  line-height: .94;
+  letter-spacing: -.045em;
+}
+
+body.electron-window[data-mode="widget"] .widget-hero .hero-sub {
+  grid-area: sub;
+  min-width: 0;
+  margin-top: 3px;
+  overflow: hidden;
+  font-size: 9px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.electron-window[data-mode="widget"] .mini-progress {
+  margin-top: 8px;
+  padding: 7px 8px;
+}
+
+body.electron-window[data-mode="widget"] .mini-progress-meta,
+body.electron-window[data-mode="widget"] .mini-progress-foot {
+  font-size: 9px;
+}
+
+body.electron-window[data-mode="widget"] .mini-progress-meta strong {
+  font-size: 14px;
+}
+
+body.electron-window[data-mode="widget"] .mini-progress .progress-track {
+  height: 4px;
+  margin: 6px 0;
+}
+
+body.electron-window[data-mode="widget"] .widget-balances {
+  gap: 6px;
+  margin-top: 8px;
+}
+
+body.electron-window[data-mode="widget"] .balance-tile {
+  min-width: 0;
+  min-height: 53px;
+  padding: 7px 8px;
+}
+
+body.electron-window[data-mode="widget"] .tile-label {
+  font-size: 9px;
+}
+
+body.electron-window[data-mode="widget"] .tile-value {
+  margin: 4px 0 3px;
+  font-size: 17px;
+  line-height: 1;
+}
+
+body.electron-window[data-mode="widget"] .tile-meta {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-size: 8px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.electron-window[data-mode="widget"] .status-chip {
+  padding: 2px 4px;
+  font-size: 8px;
+  line-height: 1.1;
+}
+
+body.electron-window[data-mode="widget"] .open-full {
+  margin-top: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+body.electron-window[data-mode="widget"] .widget-footer {
+  margin-top: 7px;
+  padding-top: 0;
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+/* History mode is content-sized. The subscription column can be taller than
+ * the calendar, so release the grid row's default stretch and keep the
+ * selected-day detail and totals immediately below the heatmap. */
+.usage-panel.history-mode {
+  align-self: start;
+  min-height: 0;
+}
+
+/* The history view is an analysis surface rather than a side-by-side KPI
+ * card. Give the calendar the full content width, then place subscription
+ * details below it so the heatmap and three summary values share one axis. */
+.content-grid.history-mode {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.content-grid.history-mode .subscription-panel {
+  margin-top: 16px;
+  border-left: 1px solid var(--line);
+}
+
+.usage-panel.history-mode .chart-heatmap.active {
+  display: block;
+  min-height: 0;
+}
+
+.usage-panel.history-mode .chart-heatmap .heatmap-body {
+  min-height: 0;
+  padding-block: 18px 14px;
+}
+
+.usage-panel.history-mode .panel-summary {
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+/* For a recent, compact range, distribute the fixed-size calendar tracks
+ * across the available panel width. Cell sizes stay restrained; the extra
+ * room becomes consistent inter-column space instead of a stranded grid. */
+.chart-heatmap .heatmap-body[data-fit="wide"] .heatmap-grid-wrap {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+.chart-heatmap .heatmap-body[data-fit="wide"] .heatmap-months,
+.chart-heatmap .heatmap-body[data-fit="wide"] .heatmap-grid {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.chart-heatmap .heatmap-body[data-fit="wide"] .heat-cell {
+  width: var(--heat-cell, 11px);
+}

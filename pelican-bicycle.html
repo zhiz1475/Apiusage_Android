@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f6ed">
+<title>鹈鹕的海边骑行 · Pelican Pedal Club</title>
+<style>
+  :root { color-scheme: light; --ink:#234c46; --muted:#687c70; --paper:#f7f6ed; --line:#d8dfce; --accent:#e97149; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:"Segoe UI","Microsoft YaHei",sans-serif; }
+  main { max-width:1440px; margin:auto; padding:32px 6vw 24px; }
+  header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-bottom:22px; border-bottom:1px solid var(--line); }
+  .brand { display:flex; align-items:center; gap:11px; font-size:12px; font-weight:700; letter-spacing:2px; }
+  .brand-mark { width:32px; height:32px; display:grid; place-items:center; border:1px solid var(--ink); border-radius:50%; font:italic 24px Georgia,serif; }
+  .edition { font:11px ui-monospace,monospace; color:var(--muted); letter-spacing:1px; }
+  .intro { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; padding:35px 0 26px; }
+  .eyebrow { font-size:11px; letter-spacing:3px; color:var(--muted); margin-bottom:12px; }
+  h1 { margin:0; font-family:Georgia,"Songti SC","SimSun",serif; font-weight:500; font-size:clamp(32px,4vw,54px); letter-spacing:1px; }
+  .intro p { max-width:270px; margin:0 0 3px; color:var(--muted); font-size:13px; line-height:1.9; }
+  .scene { position:relative; overflow:hidden; border-radius:16px; background:#e3efe5; isolation:isolate; }
+  canvas { display:block; width:100%; height:clamp(340px,44vw,580px); }
+  .scene-label { position:absolute; top:24px; left:26px; font-size:10px; letter-spacing:2px; color:#50766c; pointer-events:none; }
+  .live { position:absolute; top:24px; right:26px; display:flex; align-items:center; gap:7px; font-size:11px; color:#50766c; }
+  .live::before { content:""; width:6px; height:6px; background:#60927a; border-radius:50%; }
+  .scene-note { position:absolute; bottom:19px; left:26px; color:#526957; font:10px ui-monospace,monospace; letter-spacing:1px; }
+  .toast { position:absolute; top:19%; left:62%; padding:10px 16px; background:#fffdf2; border:1px solid #cad9c7; border-radius:18px 18px 18px 2px; color:var(--ink); font-size:14px; opacity:0; transform:translateY(8px) rotate(-5deg); transition:opacity .2s,transform .2s; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateY(0) rotate(-5deg); }
+  .controls { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:24px 0; border-bottom:1px solid var(--line); }
+  .actions { display:flex; gap:10px; }
+  button { display:flex; align-items:center; justify-content:center; gap:9px; min-height:44px; padding:0 20px; border:1px solid var(--line); border-radius:30px; background:transparent; color:var(--ink); font:500 13px inherit; cursor:pointer; transition:background .18s,transform .18s; }
+  button:hover { background:#e7ebde; transform:translateY(-1px); }
+  button.primary { color:#fffdf1; background:var(--ink); border-color:var(--ink); min-width:114px; }
+  button.primary:hover { background:#356359; }
+  button:focus-visible,input:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  button svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .speed { display:flex; gap:15px; align-items:center; font-size:12px; }
+  input { width:150px; accent-color:var(--ink); cursor:pointer; }
+  output { font:12px ui-monospace,monospace; min-width:34px; }
+  footer { display:flex; justify-content:space-between; gap:15px; padding-top:20px; color:var(--muted); font-size:11px; }
+  footer span:last-child { font:10px ui-monospace,monospace; letter-spacing:1px; }
+  @media (max-width:600px) { main { padding:22px 18px; } .edition { font-size:9px; } .brand { font-size:10px; letter-spacing:1px; } .intro { display:block; padding:27px 0 22px; } .intro p { margin-top:14px; max-width:none; font-size:12px; } .controls { flex-wrap:wrap; gap:20px; } .actions { width:100%; } .actions button { flex:1; } .speed { width:100%; } input { flex:1; min-height:24px; } .scene-label { left:16px; font-size:8px; } .live { right:16px; font-size:10px; } .scene-note { left:16px; font-size:8px; } footer { font-size:10px; } footer span:last-child { letter-spacing:0; font-size:9px; } }
+  @media (prefers-reduced-motion:reduce) { button,.toast { transition:none; } }
+</style>
+</head>
+<body>
+<main>
+  <header><div class="brand"><span class="brand-mark" aria-hidden="true">p</span>PELICAN PEDAL CLUB</div><span class="edition">VOL. 01 / THE COASTAL RIDE</span></header>
+  <section class="intro"><div><div class="eyebrow">一只鹈鹕的慢生活</div><h1>今天，骑慢一点。</h1></div><p>让海风带路，把烦恼留在身后。<br>和鹈鹕一起，漫无目的地兜个风。</p></section>
+  <section class="scene" aria-label="鹈鹕海边骑行的互动动画">
+    <canvas id="ride" role="img" aria-label="一只戴绿帽、系橙色围巾的白色鹈鹕，在海边踩着绿色自行车，车轮转动，云朵和路边花草向后移动。">你的浏览器不支持 Canvas，请用现代浏览器打开。</canvas>
+    <div class="scene-label">SEASIDE LOOP &nbsp; ↗</div><div class="live" id="status">正在兜风</div>
+    <div class="scene-note">NO HURRY. JUST A LITTLE FURTHER.</div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </section>
+  <section class="controls" aria-label="动画控制">
+    <div class="actions"><button type="button" class="primary" id="play" aria-label="暂停动画"><svg viewBox="0 0 20 20" aria-hidden="true"><path id="play-icon" d="M7 5v10M13 5v10"/></svg><span id="play-label">暂停一下</span></button><button type="button" id="bell"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 14h12l-2-3V8a4 4 0 0 0-8 0v3l-2 3ZM8 17h4M10 2v2"/></svg>叮铃铃</button></div>
+    <label class="speed" for="speed">骑行速度<input id="speed" type="range" min="0.3" max="2" step="0.1" value="1" aria-label="骑行速度"><output id="speed-value" for="speed">1.0×</output></label>
+  </section>
+  <footer><span>不赶路，感受路。</span><span>MADE FOR A SMALL MOMENT OF JOY</span></footer>
+</main>
+<script>
+(() => {
+  'use strict';
+  const canvas = document.getElementById('ride'), ctx = canvas.getContext('2d');
+  const play = document.getElementById('play'), label = document.getElementById('play-label');
+  const status = document.getElementById('status'), speedInput = document.getElementById('speed');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let running = !reduceMotion.matches, speed = 1, time = 0, previous = 0, raf = 0;
+  let width = 1200, height = 580, ringTime = -100, audioContext, toastTimer;
+  const ink = '#294f49';
+  function path(d, fill, stroke, line = 2) { const p = new Path2D(d); if (fill) {ctx.fillStyle=fill;ctx.fill(p);} if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=line;ctx.stroke(p);} }
+  function ellipse(x,y,rx,ry,fill,stroke,line=2) {ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=line;ctx.stroke();}}
+  function line(x1,y1,x2,y2,color,w=2) {ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.stroke();}
+  function cloud(x,y,s) {ctx.save();ctx.translate(x,y);ctx.scale(s,s);path('M-65 12 Q-75-8-50-16 Q-48-45-16-40 Q6-68 35-43 Q64-40 67-16 Q98-15 94 12Z','#f8faf0');ctx.restore();}
+  function flower(x,y,s,seed) {ctx.save();ctx.translate(x,y);ctx.scale(s,s);line(0,0,Math.sin(time*2+seed)*4,-24,'#729477',2);path('M0-9Q-15-23-12-7Q-6-4 0-6M0-14Q17-27 13-13Q7-9 0-11','#85a27a');const fx=Math.sin(time*2+seed)*4;for(let i=0;i<5;i++){const a=i*Math.PI*2/5;ellipse(fx+Math.cos(a)*5,-25+Math.sin(a)*5,4,4,seed%2?'#f9edbe':'#fff9e6');}ellipse(fx,-25,3,3,'#e8aa51');ctx.restore();}
+  function wheel(x,y,a) {
+    ctx.save();ctx.translate(x,y);
+    ellipse(0,0,70,70,'#e7e5c9',ink,9);ellipse(0,0,61,61,'#e1e8d9','#faf5df',5);
+    ctx.save();ctx.rotate(a);for(let i=0;i<12;i++){const t=i*Math.PI/6;line(Math.cos(t)*8,Math.sin(t)*8,Math.cos(t)*59,Math.sin(t)*59,'#8baaa0',1.5);}line(0,-61,9,-60,'#fff9df',4);ctx.restore();
+    ellipse(0,0,8,8,'#fff9df',ink,3);ctx.restore();
+  }
+  function leg(hipX,hipY,px,py,color) {
+    // A two-link leg keeps each webbed foot attached to its moving pedal.
+    const dx=px-hipX,dy=py-hipY,d=Math.hypot(dx,dy),length=67;
+    const bend=Math.sqrt(Math.max(0,length*length-d*d/4));
+    const kx=(hipX+px)/2-dy/d*bend,ky=(hipY+py)/2+dx/d*bend;
+    path(`M${hipX} ${hipY} L${kx} ${ky} L${px} ${py}`,null,ink,12);
+    path(`M${hipX} ${hipY} L${kx} ${ky} L${px} ${py}`,null,color,8);
+    path(`M${px-5} ${py-4} Q${px+7} ${py-11} ${px+15} ${py-3} L${px+27} ${py+3} L${px+10} ${py+5} L${px-7} ${py+3}Z`,color,ink,2);
+    line(px-10,py+7,px+21,py+7,ink,5);
+  }
+  function rider(t) {
+    const angle=t*4.6, bob=Math.sin(angle*2)*2.1;
+    ctx.save();ctx.translate(0,bob);
+    const p1={x:573+Math.cos(angle)*25,y:410+Math.sin(angle)*25};
+    const p2={x:573-Math.cos(angle)*25,y:410-Math.sin(angle)*25};
+    leg(541,301,p2.x,p2.y,'#c98943');
+    // Fenders and the diamond frame.
+    path('M398 405A79 79 0 0 1 553 405M653 405A79 79 0 0 1 807 405',null,'#466e60',5);
+    path('M475 420L530 326L573 410L475 420L667 322L573 410M530 326L667 322',null,ink,12);
+    path('M475 420L530 326L573 410L475 420L667 322L573 410M530 326L667 322',null,'#64a28b',7);
+    path('M731 420L661 293L666 275Q666 261 687 261L703 261',null,ink,10);
+    path('M731 420L661 293L666 275Q666 261 687 261L703 261',null,'#86b6a0',5);
+    line(690,261,708,261,'#996e46',9);
+    line(530,326,519,304,ink,7);
+    path('M497 300Q506 294 541 299Q550 308 535 311L501 309Q493 306 497 300','#9b6b48',ink,3);
+    ellipse(573,410,20,20,'#d4ddd0',ink,3);ellipse(573,410,12,12,null,'#89a499',2);
+    line(p2.x,p2.y,p1.x,p1.y,ink,5);ellipse(573,410,5,5,ink);
+    // Tail and a soft, round body.
+    path('M475 261Q428 253 415 225Q450 224 485 238L489 271Z','#f8f6e9',ink,3);
+    path('M472 242C447 270 471 306 520 310C566 316 604 285 609 240L591 196C557 197 493 216 472 242Z','#fffdf2',ink,3);
+    path('M478 277Q509 310 560 294Q541 316 507 305Q482 301 478 277','#e0e4d4');
+    // Curved pelican neck, head, and unmistakable long bill with a throat pouch.
+    path('M571 268C609 262 628 231 617 202C607 180 602 171 610 154C622 146 639 140 641 123C644 104 629 88 610 86C586 83 569 100 570 121C570 143 555 164 555 188C554 213 572 222 566 235Z','#fffdf2',ink,3);
+    path('M590 151C581 177 583 194 598 210Q610 230 597 245',null,'#d9e1d3',8);
+    path('M629 129L756 145Q728 162 704 183Q680 203 659 182Q642 166 629 129Z','#efc277',ink,3);
+    path('M630 122Q685 125 760 142Q768 143 764 151L755 157L756 147L634 143Z','#e9aa4e',ink,3);
+    path('M642 148Q671 180 697 176',null,'#dba763',2);
+    // Eye and cheek.
+    ellipse(614,116,9,10,'#f0e8d0');ellipse(616,116,4,5,ink);ellipse(617,114,1.3,1.5,'#fff');
+    if(Math.sin(t*.68)>0.995){line(610,117,621,117,'#fffdf2',11);line(610,117,621,117,ink,2);}
+    path('M597 103Q606 99 613 101',null,ink,2);
+    // Little cycling cap.
+    path('M565 104Q563 71 592 70Q619 68 629 94L630 101Z','#548575',ink,3);
+    path('M564 102Q603 96 642 100Q650 104 640 108L568 110Z','#77a98e',ink,3);
+    path('M591 73Q607 83 607 98',null,'#b9d1ab',3);ellipse(590,69,4,3,ink);
+    // Wind-blown scarf.
+    const flutter=Math.sin(t*8)*5;
+    path(`M567 179Q538 ${173+flutter} 514 ${177-flutter}L526 188L515 199Q544 ${190+flutter} 577 195Z`,'#e67951',ink,2);
+    path('M562 176Q582 181 599 174L604 186Q582 196 561 188Z','#ee855a',ink,2);
+    // Wing reaches the handlebar.
+    path('M495 233C516 220 544 229 565 241Q600 266 659 259Q671 263 660 273C615 289 566 278 536 267Q514 275 494 259','#f3f2e4',ink,3);
+    path('M507 249Q523 259 545 256M519 242Q535 251 552 249',null,'#b5c8b6',2);
+    leg(538,298,p1.x,p1.y,'#eab064');
+    ellipse(688,252,8,5,'#ebc269',ink,2);
+    ctx.restore();
+  }
+  function render() {
+    const ratio=Math.min(devicePixelRatio||1,2);ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,width,height);
+    const scale=height/580,worldWidth=width/scale;
+    ctx.scale(scale,scale);ctx.translate((worldWidth-1200)/2,0);
+    ctx.lineCap='round';ctx.lineJoin='round';
+    const left=(1200-worldWidth)/2;
+    ctx.fillStyle='#e4efe5';ctx.fillRect(left,0,worldWidth,580);
+    ellipse(925,113,43,43,'#f6dda0');ellipse(925,113,58,58,null,'#dce7d8',1);
+    for(let i=0;i<5;i++){const x=((i*340-time*9+200)%1700+1700)%1700-220;cloud(x,85+(i%3)*34,.58+(i%2)*.18);}
+    // Distant islands and sea move more slowly than the foreground.
+    ctx.save();ctx.translate(-time*3%500,0);
+    for(let i=-1;i<4;i++)path(`M${i*500} 295Q${i*500+105} 237 ${i*500+208} 267Q${i*500+340} 207 ${i*500+500} 287L${i*500+500} 330L${i*500} 330Z`,'#bfd4c2');
+    ctx.restore();ctx.fillStyle='#b7d9ce';ctx.fillRect(left,295,worldWidth,126);
+    for(let i=0;i<25;i++){const x=((i*113-time*(15+i%3*4))%1500+1500)%1500-150;const y=315+(i*23)%94;line(x,y,x+20+i%4*14,y,'#dcebe0',2);}
+    // Small sailboat on the horizon.
+    const boat=1040-(time*8)%1500;line(boat,264,boat,321,'#7b9d8c',2);path(`M${boat-3} 267L${boat-34} 311L${boat-3} 311Z`,'#fff9e4');path(`M${boat+3} 280L${boat+24} 311L${boat+3} 311Z`,'#e5efdf');path(`M${boat-37} 316L${boat+27} 316L${boat+17} 326L${boat-24} 326Z`,'#7eab99');
+    ctx.fillStyle='#d4dfb8';ctx.fillRect(left,416,worldWidth,164);
+    path(`M${left} 429Q400 414 700 432T${left+worldWidth} 425L${left+worldWidth} 580L${left} 580Z`,'#dce3c1');
+    ctx.fillStyle='#eee6cf';ctx.fillRect(left,449,worldWidth,76);line(left,448,left+worldWidth,448,'#f9f1db',3);
+    for(let i=0;i<16;i++){const x=((i*103-time*105)%1600+1600)%1600-200;line(x,491+(i%3)*10,x+22,491+(i%3)*10,'#d9d1b8',2);}
+    ellipse(595,483,194,12,'#7a927630');
+    // Road and wheels share a travel speed, keeping the ride visually grounded.
+    wheel(475,420,time*4.6*.326);wheel(731,420,time*4.6*.326);
+    rider(time);
+    for(let i=0;i<15;i++){const x=((i*117-time*115)%1755+1755)%1755-240;flower(x,544+(i%3)*13,.65+(i%4)*.16,i);}
+    // A few passing blades of grass behind the road.
+    for(let i=0;i<14;i++){const x=((i*137-time*105)%1800+1800)%1800-200;path(`M${x} 443l-4-10M${x+4} 443l5-14`,null,'#99af84',2);}
+    if(time-ringTime<1.2&&time-ringTime>=0){const age=time-ringTime;ctx.globalAlpha=1-age/1.2;for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(688,252,17+age*25+i*11,-1.4,-.15);ctx.strokeStyle='#d29745';ctx.lineWidth=2;ctx.stroke();}ctx.globalAlpha=1;}
+  }
+  function resize() { const bounds=canvas.getBoundingClientRect();width=bounds.width;height=bounds.height;const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);render(); }
+  function frame(now) {if(!running){raf=0;return;}if(previous)time+=Math.min((now-previous)/1000,.05)*speed;previous=now;render();raf=requestAnimationFrame(frame);}
+  function updatePlayback() {label.textContent=running?'暂停一下':'继续骑行';play.setAttribute('aria-label',running?'暂停动画':'播放动画');document.getElementById('play-icon').setAttribute('d',running?'M7 5v10M13 5v10':'M6 4l9 6-9 6Z');status.textContent=running?'正在兜风':'歇一小会';if(running&&!raf){previous=0;raf=requestAnimationFrame(frame);}else if(!running){cancelAnimationFrame(raf);raf=0;previous=0;}}
+  play.addEventListener('click',()=>{running=!running;updatePlayback();});
+  speedInput.addEventListener('input',()=>{speed=Number(speedInput.value);document.getElementById('speed-value').value=speed.toFixed(1)+'×';});
+  document.getElementById('bell').addEventListener('click',()=>{
+    ringTime=time;const toast=document.getElementById('toast');toast.textContent='叮铃铃～ 借过一下！';toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),1500);render();
+    try {const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;audioContext??=new Audio();audioContext.resume().catch(()=>{});const start=audioContext.currentTime;[0,.16].forEach(delay=>{[1568,2352,3136].forEach((frequency,index)=>{const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();oscillator.type='sine';oscillator.frequency.value=frequency;gain.gain.setValueAtTime(0,start+delay);gain.gain.linearRampToValueAtTime(.075/(index+1),start+delay+.006);gain.gain.exponentialRampToValueAtTime(.0001,start+delay+.75);oscillator.connect(gain);gain.connect(audioContext.destination);oscillator.start(start+delay);oscillator.stop(start+delay+.8);});});}catch(e){/* The visual bell still works when audio is unavailable. */}
+  });
+  document.addEventListener('visibilitychange',()=>{previous=0;});
+  reduceMotion.addEventListener('change',e=>{if(e.matches){running=false;updatePlayback();}});
+  new ResizeObserver(resize).observe(canvas);resize();updatePlayback();
+})();
+</script>
+</body>
+</html>
